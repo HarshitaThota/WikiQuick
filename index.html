@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Wikipedia Summarizer</title>
+  <style>
+    body{font-family:sans-serif;max-width:600px;margin:40px auto;padding:0 1rem}
+    input,button{padding:.6rem;font-size:1rem}
+    pre{white-space:pre-wrap;font-size:1rem;line-height:1.4}
+  </style>
+</head>
+<body>
+  <h1>Wikipedia Summarizer</h1>
+  <input id="title" placeholder="Paste URL or type article name">
+  <button id="go">Summarize</button>
+  <pre id="out"></pre>
+
+  <script>
+    async function summarize(){
+      const title = document.getElementById("title").value.trim();
+      if(!title) return alert("Enter a title or URL first");
+      document.getElementById("out").textContent = "⏳ Working...";
+      const r = await fetch("/api/summarize", {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({ title })
+      });
+      const data = await r.json();
+      document.getElementById("out").textContent =
+        data.summary ?? ("⚠️ " + data.error);
+    }
+    document.getElementById("go").onclick = summarize;
+  </script>
+</body>
+</html>
